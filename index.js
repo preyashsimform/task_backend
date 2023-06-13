@@ -2,6 +2,8 @@ const express = require('express');
 const server = express();
 const mysql = require('mysql2');
 const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
 require('dotenv').config();
 
 const db = mysql.createPool({
@@ -12,8 +14,12 @@ const db = mysql.createPool({
 });
 
 server.use(express.json());
-server.use());
+server.use(cors());
 
+const sslOptions = {
+    key: fs.readFileSync('/home/preyash/task1/server/private.pem'),
+    cert: fs.readFileSync('/home/preyash/task1/server/certificate.pem')
+};
 
 server.post("/register", (req, res) => {
     const { name } = req.body;
@@ -21,6 +27,7 @@ server.post("/register", (req, res) => {
     const { category } = req.body;
 
     let sql = "INSERT INTO games (name, cost, category) VALUES (?,?,?)"
+    console.log(sql)
     db.query(sql, [name, cost, category], (err,result) =>{
         if (err) {
             console.log(err);
@@ -66,6 +73,7 @@ server.delete("/delete/:index", (req,res) =>{
     let sql = "DELETE FROM games WHERE idgames = ?"
     db.query(sql, [index], (err,result) =>{err ? console.log(err) : res.send(result)})
 })
-server.listen(3001, () =>
-    console.log("Running in the port 3001")
-);
+
+https.createServer(sslOptions, server).listen(443, () => {
+    console.log('Running in the port 443');
+});
