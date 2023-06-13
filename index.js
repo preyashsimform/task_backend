@@ -11,17 +11,8 @@ const db = mysql.createPool({
     database: process.env.database,
 });
 
-// const db = mysql.createPool({
-//     host: "localhost",
-//     user: "root",
-//     password: "Password",
-//     database: "one",
-// });
-
 server.use(express.json());
-server.use(cors({
-    origin:'http://localhost:3000'
-}));
+server.use());
 
 
 server.post("/register", (req, res) => {
