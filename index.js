@@ -11,15 +11,11 @@ const db = mysql.createPool({
     user: process.env.user,
     password: process.env.password,
     database: process.env.database,
+    ssl: {ca: fs.readFileSync("DigiCertGlobalRootCA.crt.pem")}
 });
 
 server.use(express.json());
 server.use(cors());
-
-const sslOptions = {
-    key: fs.readFileSync('/home/preyash/task1/server/private.pem'),
-    cert: fs.readFileSync('/home/preyash/task1/server/certificate.pem')
-};
 
 server.post("/register", (req, res) => {
     const { name } = req.body;
@@ -74,6 +70,6 @@ server.delete("/delete/:index", (req,res) =>{
     db.query(sql, [index], (err,result) =>{err ? console.log(err) : res.send(result)})
 })
 
-https.createServer(sslOptions, server).listen(443, () => {
-    console.log('Running in the port 443');
+server.listen(80,()=>{
+    console.log('Running in the port 80');
 });
